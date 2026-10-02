@@ -1,4 +1,4 @@
-{% comment %} PROPS 1.0.0 | props.tools | MIT license, github.com/hobi-design/props {% endcomment %}
+{% comment %} PROPS 1.0.1 | props.tools | MIT license, github.com/hobi-design/props {% endcomment %}
 {%- comment -%}
   Looping Testimonials | PROPS — https://props.tools/
 {%- endcomment -%}
@@ -508,6 +508,11 @@
   .props-looping-testimonials-description p {
     margin: 0;
   }
+  .props-looping-testimonials-description a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 0.3em;
+  }
 
   .props-looping-testimonials-ticker {
     width: 100%;
@@ -583,6 +588,11 @@
   .props-looping-testimonials-quote p {
     margin: 0;
   }
+  .props-looping-testimonials-quote a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 0.3em;
+  }
 
   .props-looping-testimonials-author {
     display: flex;
@@ -645,7 +655,7 @@
 >
 
   {% if has_header %}
-    <div class="page-width props-looping-testimonials-container">
+    <div class="props-looping-testimonials-container">
       <div class="props-looping-testimonials-header">
         {% if section.settings.subtitle != blank %}
           <span class="props-looping-testimonials-subtitle">{{ section.settings.subtitle | escape }}</span>
@@ -654,7 +664,7 @@
           <h2 class="props-looping-testimonials-heading">{{ section.settings.heading | escape }}</h2>
         {% endif %}
         {% if section.settings.description != blank %}
-          <div class="props-looping-testimonials-description rte">{{ section.settings.description }}</div>
+          <div class="props-looping-testimonials-description">{{ section.settings.description }}</div>
         {% endif %}
       </div>
     </div>
@@ -709,7 +719,7 @@
                 {% endif %}
 
                 {% if block.settings.quote != blank %}
-                  <div class="props-looping-testimonials-quote rte">{{ block.settings.quote }}</div>
+                  <div class="props-looping-testimonials-quote">{{ block.settings.quote }}</div>
                 {% endif %}
               </div>
 

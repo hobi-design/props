@@ -1,4 +1,4 @@
-{% comment %} PROPS 1.0.0 | props.tools | MIT license, github.com/hobi-design/props {% endcomment %}
+{% comment %} PROPS 1.0.1 | props.tools | MIT license, github.com/hobi-design/props {% endcomment %}
 {%- comment -%}
   Logo Marquee | PROPS — https://props.tools/
 {%- endcomment -%}
@@ -456,6 +456,11 @@
   .props-logo-marquee-description p {
     margin: 0;
   }
+  .props-logo-marquee-description a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 0.3em;
+  }
 
   .props-logo-marquee-logos {
     width: 100%;
@@ -549,7 +554,7 @@
 {% endstyle %}
 
 <div class="props-logo-marquee-{{ section.id }}" data-section-type="props-logo-marquee" data-section-id="{{ section.id }}" data-speed="{{ section.settings.speed }}" data-speed-mobile="{{ section.settings.speed_mobile }}" data-direction="{{ section.settings.direction }}" data-reverse-mobile="{{ section.settings.reverse_mobile }}" data-draggable="{{ section.settings.draggable }}" data-pause-on-hover="{{ section.settings.pause_on_hover }}">
-  <div class="page-width props-logo-marquee-container">
+  <div class="props-logo-marquee-container">
     {% if section.blocks.size > 0 or section.settings.heading != blank %}
       <div class="props-logo-marquee-wrapper">
 
@@ -559,7 +564,7 @@
               <h2 class="props-logo-marquee-heading">{{ section.settings.heading | escape }}</h2>
             {% endif %}
             {% if section.settings.description != blank %}
-              <div class="props-logo-marquee-description rte">{{ section.settings.description }}</div>
+              <div class="props-logo-marquee-description">{{ section.settings.description }}</div>
             {% endif %}
           </div>
         {% endif %}

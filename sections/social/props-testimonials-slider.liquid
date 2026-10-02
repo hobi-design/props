@@ -1,4 +1,4 @@
-{% comment %} PROPS 1.0.1 | props.tools | MIT license, github.com/hobi-design/props {% endcomment %}
+{% comment %} PROPS 1.0.2 | props.tools | MIT license, github.com/hobi-design/props {% endcomment %}
 {%- comment -%}
   Testimonials Slider | PROPS — https://props.tools/
 {%- endcomment -%}
@@ -458,6 +458,11 @@
   .props-testimonials-slider-quote p {
     margin: 0;
   }
+  .props-testimonials-slider-quote a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 0.3em;
+  }
 
   .props-testimonials-slider-attribution {
     display: flex;
@@ -608,7 +613,7 @@
   data-section-id="{{ section.id }}"
 >
   {% if has_blocks %}
-    <div class="page-width props-testimonials-slider-container">
+    <div class="props-testimonials-slider-container">
       <div class="props-testimonials-slider-mobile-wrapper">
         <div class="props-testimonials-slider-slides" id="Slides-{{ section.id }}">
           {% for block in section.blocks %}
@@ -635,7 +640,7 @@
                 <div class="props-testimonials-slider-content-col">
                   <div class="props-testimonials-slider-content-inner">
                     {% if block.settings.quote != blank %}
-                      <div class="props-testimonials-slider-quote rte">{{ block.settings.quote }}</div>
+                      <div class="props-testimonials-slider-quote">{{ block.settings.quote }}</div>
                     {% endif %}
 
                     <div class="props-testimonials-slider-attribution">

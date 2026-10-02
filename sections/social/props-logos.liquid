@@ -1,4 +1,4 @@
-{% comment %} PROPS 1.0.0 | props.tools | MIT license, github.com/hobi-design/props {% endcomment %}
+{% comment %} PROPS 1.0.1 | props.tools | MIT license, github.com/hobi-design/props {% endcomment %}
 {%- comment -%}
   Logo Showcase | PROPS — https://props.tools/
 {%- endcomment -%}
@@ -399,6 +399,11 @@
   .props-logo-description p {
     margin: 0;
   }
+  .props-logo-description a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 0.3em;
+  }
 
   .props-logo-grid {
     display: grid;
@@ -474,7 +479,7 @@
 {% endstyle %}
 
 <div class="props-logo-showcase-{{ section.id }}">
-  <div class="page-width props-logo-container">
+  <div class="props-logo-container">
     {% if section.blocks.size > 0 or section.settings.heading != blank %}
       <div class="props-logo-wrapper">
 
@@ -484,7 +489,7 @@
               <h2 class="props-logo-heading">{{ section.settings.heading | escape }}</h2>
             {% endif %}
             {% if section.settings.description != blank %}
-              <div class="props-logo-description rte">{{ section.settings.description }}</div>
+              <div class="props-logo-description">{{ section.settings.description }}</div>
             {% endif %}
           </div>
         {% endif %}

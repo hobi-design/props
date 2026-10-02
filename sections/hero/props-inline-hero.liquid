@@ -1,4 +1,4 @@
-{% comment %} PROPS 1.0.1 | props.tools | MIT license, github.com/hobi-design/props {% endcomment %}
+{% comment %} PROPS 1.0.2 | props.tools | MIT license, github.com/hobi-design/props {% endcomment %}
 {%- comment -%}
   Inline Image Hero | PROPS — https://props.tools/
 {%- endcomment -%}
@@ -333,6 +333,14 @@
   .props-inline-image-hero-container {
     max-width: var(--page-width, 1200px);
     margin: 0 auto;
+    padding: 0 15px;
+    box-sizing: border-box;
+  }
+
+  @media screen and (min-width: 750px) {
+    .props-inline-image-hero-container {
+      padding: 0 50px;
+    }
   }
 
   .props-inline-image-hero-content {
@@ -389,6 +397,11 @@
     line-height: 1.5;
     opacity: 0.8;
   }
+  .props-inline-image-hero-description a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 0.3em;
+  }
 
   .props-inline-image-hero-description p:last-child {
     margin-bottom: 0;
@@ -437,7 +450,7 @@
 {% endstyle %}
 
 <div class="props-inline-image-hero-{{ section.id }}" data-section-type="props-inline-image-hero" data-section-id="{{ section.id }}">
-  <div class="page-width props-inline-image-hero-container">
+  <div class="props-inline-image-hero-container">
     <div class="props-inline-image-hero-content">
 
       {% if section.settings.heading != blank %}
@@ -475,7 +488,7 @@
       {% endif %}
 
       {% if section.settings.description != blank %}
-        <div class="props-inline-image-hero-description rte">{{ section.settings.description }}</div>
+        <div class="props-inline-image-hero-description">{{ section.settings.description }}</div>
       {% endif %}
 
       {%- liquid

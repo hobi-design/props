@@ -1,4 +1,4 @@
-{% comment %} PROPS 1.0.1 | props.tools | MIT license, github.com/hobi-design/props {% endcomment %}
+{% comment %} PROPS 1.0.2 | props.tools | MIT license, github.com/hobi-design/props {% endcomment %}
 {%- comment -%}
   Slider Gallery | PROPS — https://props.tools/
 {%- endcomment -%}
@@ -328,6 +328,11 @@
     line-height: 1.5;
     opacity: 0.9;
   }
+  .props-slider-gallery-description a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 0.3em;
+  }
 
   .props-slider-gallery-description p:last-child {
     margin-bottom: 0;
@@ -453,14 +458,14 @@
 {% endstyle %}
 
 <div class="props-slider-gallery-{{ section.id }}" data-section-type="props-slider-gallery" data-section-id="{{ section.id }}">
-  <div class="page-width props-slider-gallery-container">
+  <div class="props-slider-gallery-container">
 
     <div class="props-slider-gallery-content">
       {% if section.settings.heading != blank %}
         <h2 class="props-slider-gallery-heading">{{ section.settings.heading | escape }}</h2>
       {% endif %}
       {% if section.settings.description != blank %}
-        <div class="props-slider-gallery-description rte">{{ section.settings.description }}</div>
+        <div class="props-slider-gallery-description">{{ section.settings.description }}</div>
       {% endif %}
     </div>
 
