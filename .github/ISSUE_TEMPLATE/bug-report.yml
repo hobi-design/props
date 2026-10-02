@@ -1,0 +1,34 @@
+name: Bug report
+description: A section does something wrong that isn't specific to one theme.
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: input
+    id: section
+    attributes:
+      label: Section and version
+      description: The version is in the comment on the first line of the file.
+      placeholder: Timeline 1.0.1
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happens
+      description: Include the settings you changed, if any.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+  - type: input
+    id: where
+    attributes:
+      label: Browser and device
+      placeholder: Safari on iPhone 15
+  - type: input
+    id: theme
+    attributes:
+      label: Theme and version
+      placeholder: Dawn 15.2

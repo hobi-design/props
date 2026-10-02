@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Install guide
+    url: https://dev.props.tools/how-to
+    about: Six steps, with screenshots, for adding a section to a theme.
+  - name: Something else
+    url: https://dev.props.tools/contact
+    about: Questions that aren't about a specific section.

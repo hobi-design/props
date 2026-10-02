@@ -1,0 +1,22 @@
+name: Section request
+description: Suggest a section your theme left out.
+title: "[Request] "
+labels: ["request"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What the section should do
+      description: Describe the job it does on the page, rather than how it looks.
+    validations:
+      required: true
+  - type: input
+    id: example
+    attributes:
+      label: An example
+      description: A link to a store or site that already does this well.
+  - type: textarea
+    id: settings
+    attributes:
+      label: Settings you would expect
+      description: Optional. What a merchant should be able to change in the theme editor.
