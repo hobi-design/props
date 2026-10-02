@@ -16,7 +16,7 @@
         "Video",
         "Background"
       ],
-      "version": "1.0.1",
+      "version": "1.0.2",
       "description": "A full-width hero section with a background image or video.",
       "updated": "2026-10-03",
       "file": "sections/hero/props-bg-media-hero.liquid",
@@ -33,7 +33,7 @@
         "Collage",
         "Images"
       ],
-      "version": "1.0.2",
+      "version": "1.0.3",
       "description": "A hero section with scattered, edge-anchored images around text and CTA buttons.",
       "updated": "2026-10-03",
       "file": "sections/hero/props-collage-hero.liquid",
@@ -50,7 +50,7 @@
         "Typography",
         "Images"
       ],
-      "version": "1.0.2",
+      "version": "1.0.3",
       "description": "A hero section with images embedded directly inside the heading text.",
       "updated": "2026-10-03",
       "file": "sections/hero/props-inline-hero.liquid",
@@ -83,7 +83,7 @@
         "Slider",
         "Interactive"
       ],
-      "version": "1.0.2",
+      "version": "1.0.3",
       "description": "A two-column section with a horizontal image slider.",
       "updated": "2026-10-03",
       "file": "sections/gallery/props-slider-gallery.liquid",
@@ -167,7 +167,7 @@
         "Animated",
         "Scroll"
       ],
-      "version": "1.0.2",
+      "version": "1.0.3",
       "description": "An animated timeline that supports text blocks, images, and links.",
       "updated": "2026-10-03",
       "file": "sections/content/props-timeline.liquid",
