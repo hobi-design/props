@@ -1,7 +1,7 @@
 {
   "name": "PROPS",
   "description": "Open-source Shopify sections. One Liquid file each.",
-  "homepage": "https://dev.props.tools",
+  "homepage": "https://props.tools",
   "repository": "https://github.com/hobi-design/props",
   "license": "MIT",
   "install": "Save the file to sections/<filename> in a Shopify theme. No other files are needed.",
@@ -21,7 +21,7 @@
       "updated": "2026-10-03",
       "file": "sections/hero/props-bg-media-hero.liquid",
       "raw": "https://raw.githubusercontent.com/hobi-design/props/main/sections/hero/props-bg-media-hero.liquid",
-      "page": "https://dev.props.tools/shopify/bg-media-hero",
+      "page": "https://props.tools/shopify/bg-media-hero",
       "thumbnail": "https://framerusercontent.com/images/ZzAYkdySC6SCLwW2l3J1GNIE.png?scale-down-to=1024"
     },
     {
@@ -38,7 +38,7 @@
       "updated": "2026-10-03",
       "file": "sections/hero/props-collage-hero.liquid",
       "raw": "https://raw.githubusercontent.com/hobi-design/props/main/sections/hero/props-collage-hero.liquid",
-      "page": "https://dev.props.tools/shopify/collage-hero",
+      "page": "https://props.tools/shopify/collage-hero",
       "thumbnail": "https://framerusercontent.com/images/grAs1dDc5bOoXCe54e4hmvLT4.png?scale-down-to=1024"
     },
     {
@@ -55,7 +55,7 @@
       "updated": "2026-10-03",
       "file": "sections/hero/props-inline-hero.liquid",
       "raw": "https://raw.githubusercontent.com/hobi-design/props/main/sections/hero/props-inline-hero.liquid",
-      "page": "https://dev.props.tools/shopify/inline-image-hero",
+      "page": "https://props.tools/shopify/inline-image-hero",
       "thumbnail": "https://framerusercontent.com/images/0zDoLGIFkanS7k5DajwtO2ZNU.png?scale-down-to=1024"
     },
     {
@@ -71,7 +71,7 @@
       "updated": "2026-10-03",
       "file": "sections/gallery/props-gallery.liquid",
       "raw": "https://raw.githubusercontent.com/hobi-design/props/main/sections/gallery/props-gallery.liquid",
-      "page": "https://dev.props.tools/shopify/gallery-grid",
+      "page": "https://props.tools/shopify/gallery-grid",
       "thumbnail": "https://framerusercontent.com/images/OEpx1402RcGx5m35fR4uWjDEkp8.png?scale-down-to=1024"
     },
     {
@@ -88,7 +88,7 @@
       "updated": "2026-10-03",
       "file": "sections/gallery/props-slider-gallery.liquid",
       "raw": "https://raw.githubusercontent.com/hobi-design/props/main/sections/gallery/props-slider-gallery.liquid",
-      "page": "https://dev.props.tools/shopify/slider-gallery",
+      "page": "https://props.tools/shopify/slider-gallery",
       "thumbnail": "https://framerusercontent.com/images/weZsoy4yRY5p1rhB6o6sImFGiA4.png?scale-down-to=1024"
     },
     {
@@ -105,7 +105,7 @@
       "updated": "2026-10-03",
       "file": "sections/social/props-logo-marquee.liquid",
       "raw": "https://raw.githubusercontent.com/hobi-design/props/main/sections/social/props-logo-marquee.liquid",
-      "page": "https://dev.props.tools/shopify/logo-marquee",
+      "page": "https://props.tools/shopify/logo-marquee",
       "thumbnail": "https://framerusercontent.com/images/9nT7O8BaC3N2HSpzbDHN7DoBsMA.png?scale-down-to=1024"
     },
     {
@@ -121,7 +121,7 @@
       "updated": "2026-10-03",
       "file": "sections/social/props-logos.liquid",
       "raw": "https://raw.githubusercontent.com/hobi-design/props/main/sections/social/props-logos.liquid",
-      "page": "https://dev.props.tools/shopify/logo-showcase",
+      "page": "https://props.tools/shopify/logo-showcase",
       "thumbnail": "https://framerusercontent.com/images/Ux4Y2TXa6IuxbDGOo6qYIqTXc8.png?scale-down-to=1024"
     },
     {
@@ -138,7 +138,7 @@
       "updated": "2026-10-03",
       "file": "sections/social/props-looping-testimonials.liquid",
       "raw": "https://raw.githubusercontent.com/hobi-design/props/main/sections/social/props-looping-testimonials.liquid",
-      "page": "https://dev.props.tools/shopify/looping-testimonials-ticker",
+      "page": "https://props.tools/shopify/looping-testimonials-ticker",
       "thumbnail": "https://framerusercontent.com/images/oQJtbXEOED8Ifd9GCOvjXMl9vw.png?scale-down-to=1024"
     },
     {
@@ -155,7 +155,7 @@
       "updated": "2026-10-03",
       "file": "sections/social/props-testimonials-slider.liquid",
       "raw": "https://raw.githubusercontent.com/hobi-design/props/main/sections/social/props-testimonials-slider.liquid",
-      "page": "https://dev.props.tools/shopify/testimonials-slider",
+      "page": "https://props.tools/shopify/testimonials-slider",
       "thumbnail": "https://framerusercontent.com/images/eSM1gLNOn36Wo7UU7lcRDhToiKk.png?scale-down-to=1024"
     },
     {
@@ -172,7 +172,7 @@
       "updated": "2026-10-03",
       "file": "sections/content/props-timeline.liquid",
       "raw": "https://raw.githubusercontent.com/hobi-design/props/main/sections/content/props-timeline.liquid",
-      "page": "https://dev.props.tools/shopify/timeline",
+      "page": "https://props.tools/shopify/timeline",
       "thumbnail": "https://framerusercontent.com/images/8ceehhm9fu6qZ874VFCUNKKooZg.png?scale-down-to=1024"
     },
     {
@@ -189,7 +189,7 @@
       "updated": "2026-10-03",
       "file": "sections/interactive/props-before-after.liquid",
       "raw": "https://raw.githubusercontent.com/hobi-design/props/main/sections/interactive/props-before-after.liquid",
-      "page": "https://dev.props.tools/shopify/before-after-slider",
+      "page": "https://props.tools/shopify/before-after-slider",
       "thumbnail": "https://framerusercontent.com/images/VbpLGlHaelSt9rv0RwDO9k04nY.png?scale-down-to=1024"
     },
     {
@@ -206,7 +206,7 @@
       "updated": "2026-07-31",
       "file": "sections/interactive/props-ticker.liquid",
       "raw": "https://raw.githubusercontent.com/hobi-design/props/main/sections/interactive/props-ticker.liquid",
-      "page": "https://dev.props.tools/shopify/ticker-%28infinite-loop%29",
+      "page": "https://props.tools/shopify/ticker-%28infinite-loop%29",
       "thumbnail": "https://framerusercontent.com/images/8lcYh0xAwc3zMBZbNwoMucLT9qY.png?scale-down-to=1024"
     }
   ]
