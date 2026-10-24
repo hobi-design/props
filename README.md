@@ -4,7 +4,7 @@ PROPS is a free library of Shopify sections. Each section is a single Liquid fil
 
 **[Browse the library](https://props.tools/shopify)** · **[Install guide](https://props.tools/how-to)** · **[Report a theme issue](https://github.com/hobi-design/props/issues/new/choose)**
 
-<a href="https://props.tools/shopify"><picture><source media="(prefers-color-scheme: dark)" srcset=".github/wall-dark.svg"><img src=".github/wall-light.svg" alt="The section library: a canvas of real sections, among them Collage Hero, Gallery Grid, Testimonials Slider and Timeline. Basic stuff shouldn't need an app." width="100%"></picture></a>
+<a href="https://props.tools/shopify"><picture><source media="(prefers-color-scheme: dark)" srcset=".github/wall-dark.svg"><img src=".github/wall-light.svg" alt="The section library: a canvas of real sections, among them Image Collage Hero, Image Gallery Grid, Testimonial Slider and Timeline. Basic stuff shouldn't need an app." width="100%"></picture></a>
 
 ## Sections
 
