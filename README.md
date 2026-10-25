@@ -15,22 +15,22 @@ Each one links to a live preview on the PROPS site and to its code in this repos
 <table>
 <tr>
 <td width="33%" valign="top">
-<a href="https://props.tools/shopify/bg-media-hero"><img src="https://framerusercontent.com/images/ZzAYkdySC6SCLwW2l3J1GNIE.png?scale-down-to=1024" alt="BG Media Hero" width="100%"></a><br>
-<b>BG Media Hero</b><br>
-<sub>A full-width hero section with a background image or video.</sub><br>
-<sub><a href="https://props.tools/shopify/bg-media-hero">Preview</a> · <a href="sections/hero/props-bg-media-hero.liquid">Code</a></sub>
-</td>
-<td width="33%" valign="top">
-<a href="https://props.tools/shopify/collage-hero"><img src="https://framerusercontent.com/images/grAs1dDc5bOoXCe54e4hmvLT4.png?scale-down-to=1024" alt="Collage Hero" width="100%"></a><br>
-<b>Collage Hero</b><br>
+<a href="https://props.tools/shopify/image-collage-hero"><img src="/media/sections/image-collage-hero.webp" alt="Image Collage Hero" width="100%"></a><br>
+<b>Image Collage Hero</b><br>
 <sub>A hero section with scattered, edge-anchored images around text and CTA buttons.</sub><br>
-<sub><a href="https://props.tools/shopify/collage-hero">Preview</a> · <a href="sections/hero/props-collage-hero.liquid">Code</a></sub>
+<sub><a href="https://props.tools/shopify/image-collage-hero">Preview</a> · <a href="sections/hero/props-collage-hero.liquid">Code</a></sub>
 </td>
 <td width="33%" valign="top">
-<a href="https://props.tools/shopify/inline-image-hero"><img src="https://framerusercontent.com/images/0zDoLGIFkanS7k5DajwtO2ZNU.png?scale-down-to=1024" alt="Inline Image Hero" width="100%"></a><br>
+<a href="https://props.tools/shopify/inline-image-hero"><img src="/media/sections/inline-image-hero.webp" alt="Inline Image Hero" width="100%"></a><br>
 <b>Inline Image Hero</b><br>
 <sub>A hero section with images embedded directly inside the heading text.</sub><br>
 <sub><a href="https://props.tools/shopify/inline-image-hero">Preview</a> · <a href="sections/hero/props-inline-hero.liquid">Code</a></sub>
+</td>
+<td width="33%" valign="top">
+<a href="https://props.tools/shopify/video-background-hero"><img src="/media/sections/video-background-hero.webp" alt="Video Background Hero" width="100%"></a><br>
+<b>Video Background Hero</b><br>
+<sub>A full-width hero section with a background image or video.</sub><br>
+<sub><a href="https://props.tools/shopify/video-background-hero">Preview</a> · <a href="sections/hero/props-bg-media-hero.liquid">Code</a></sub>
 </td>
 </tr>
 </table>
@@ -40,16 +40,16 @@ Each one links to a live preview on the PROPS site and to its code in this repos
 <table>
 <tr>
 <td width="33%" valign="top">
-<a href="https://props.tools/shopify/gallery-grid"><img src="https://framerusercontent.com/images/OEpx1402RcGx5m35fR4uWjDEkp8.png?scale-down-to=1024" alt="Gallery Grid" width="100%"></a><br>
-<b>Gallery Grid</b><br>
+<a href="https://props.tools/shopify/image-gallery-grid"><img src="/media/sections/image-gallery-grid.webp" alt="Image Gallery Grid" width="100%"></a><br>
+<b>Image Gallery Grid</b><br>
 <sub>A clean, responsive gallery with customizable layouts.</sub><br>
-<sub><a href="https://props.tools/shopify/gallery-grid">Preview</a> · <a href="sections/gallery/props-gallery.liquid">Code</a></sub>
+<sub><a href="https://props.tools/shopify/image-gallery-grid">Preview</a> · <a href="sections/gallery/props-gallery.liquid">Code</a></sub>
 </td>
 <td width="33%" valign="top">
-<a href="https://props.tools/shopify/slider-gallery"><img src="https://framerusercontent.com/images/weZsoy4yRY5p1rhB6o6sImFGiA4.png?scale-down-to=1024" alt="Slider Gallery" width="100%"></a><br>
-<b>Slider Gallery</b><br>
+<a href="https://props.tools/shopify/image-slider-with-text"><img src="/media/sections/image-slider-with-text.webp" alt="Image Slider with Text" width="100%"></a><br>
+<b>Image Slider with Text</b><br>
 <sub>A two-column section with a horizontal image slider.</sub><br>
-<sub><a href="https://props.tools/shopify/slider-gallery">Preview</a> · <a href="sections/gallery/props-slider-gallery.liquid">Code</a></sub>
+<sub><a href="https://props.tools/shopify/image-slider-with-text">Preview</a> · <a href="sections/gallery/props-slider-gallery.liquid">Code</a></sub>
 </td>
 <td width="33%"></td>
 </tr>
@@ -60,30 +60,30 @@ Each one links to a live preview on the PROPS site and to its code in this repos
 <table>
 <tr>
 <td width="33%" valign="top">
-<a href="https://props.tools/shopify/logo-marquee"><img src="https://framerusercontent.com/images/9nT7O8BaC3N2HSpzbDHN7DoBsMA.png?scale-down-to=1024" alt="Logo Marquee" width="100%"></a><br>
-<b>Logo Marquee</b><br>
-<sub>Display partner, client, or brand logos in a continuously scrolling ticker.</sub><br>
-<sub><a href="https://props.tools/shopify/logo-marquee">Preview</a> · <a href="sections/social/props-logo-marquee.liquid">Code</a></sub>
-</td>
-<td width="33%" valign="top">
-<a href="https://props.tools/shopify/logo-showcase"><img src="https://framerusercontent.com/images/Ux4Y2TXa6IuxbDGOo6qYIqTXc8.png?scale-down-to=1024" alt="Logo Showcase" width="100%"></a><br>
-<b>Logo Showcase</b><br>
+<a href="https://props.tools/shopify/logo-grid"><img src="/media/sections/logo-grid.webp" alt="Logo Grid" width="100%"></a><br>
+<b>Logo Grid</b><br>
 <sub>Display logos in a responsive grid, in two layouts.</sub><br>
-<sub><a href="https://props.tools/shopify/logo-showcase">Preview</a> · <a href="sections/social/props-logos.liquid">Code</a></sub>
+<sub><a href="https://props.tools/shopify/logo-grid">Preview</a> · <a href="sections/social/props-logos.liquid">Code</a></sub>
 </td>
 <td width="33%" valign="top">
-<a href="https://props.tools/shopify/looping-testimonials-ticker"><img src="https://framerusercontent.com/images/oQJtbXEOED8Ifd9GCOvjXMl9vw.png?scale-down-to=1024" alt="Looping Testimonials (Ticker)" width="100%"></a><br>
-<b>Looping Testimonials (Ticker)</b><br>
+<a href="https://props.tools/shopify/logo-carousel"><img src="/media/sections/logo-carousel.webp" alt="Scrolling Logo Carousel" width="100%"></a><br>
+<b>Scrolling Logo Carousel</b><br>
+<sub>Display partner, client, or brand logos in a continuously scrolling ticker.</sub><br>
+<sub><a href="https://props.tools/shopify/logo-carousel">Preview</a> · <a href="sections/social/props-logo-marquee.liquid">Code</a></sub>
+</td>
+<td width="33%" valign="top">
+<a href="https://props.tools/shopify/scrolling-testimonials"><img src="/media/sections/scrolling-testimonials.webp" alt="Scrolling Testimonials" width="100%"></a><br>
+<b>Scrolling Testimonials</b><br>
 <sub>An infinite-scrolling horizontal ticker of testimonial cards.</sub><br>
-<sub><a href="https://props.tools/shopify/looping-testimonials-ticker">Preview</a> · <a href="sections/social/props-looping-testimonials.liquid">Code</a></sub>
+<sub><a href="https://props.tools/shopify/scrolling-testimonials">Preview</a> · <a href="sections/social/props-looping-testimonials.liquid">Code</a></sub>
 </td>
 </tr>
 <tr>
 <td width="33%" valign="top">
-<a href="https://props.tools/shopify/testimonials-slider"><img src="https://framerusercontent.com/images/eSM1gLNOn36Wo7UU7lcRDhToiKk.png?scale-down-to=1024" alt="Testimonials Slider" width="100%"></a><br>
-<b>Testimonials Slider</b><br>
+<a href="https://props.tools/shopify/testimonial-slider"><img src="/media/sections/testimonial-slider.webp" alt="Testimonial Slider" width="100%"></a><br>
+<b>Testimonial Slider</b><br>
 <sub>A testimonial slider with image, quote, author info, and logo.</sub><br>
-<sub><a href="https://props.tools/shopify/testimonials-slider">Preview</a> · <a href="sections/social/props-testimonials-slider.liquid">Code</a></sub>
+<sub><a href="https://props.tools/shopify/testimonial-slider">Preview</a> · <a href="sections/social/props-testimonials-slider.liquid">Code</a></sub>
 </td>
 <td width="33%"></td>
 <td width="33%"></td>
@@ -95,7 +95,7 @@ Each one links to a live preview on the PROPS site and to its code in this repos
 <table>
 <tr>
 <td width="33%" valign="top">
-<a href="https://props.tools/shopify/timeline"><img src="https://framerusercontent.com/images/8ceehhm9fu6qZ874VFCUNKKooZg.png?scale-down-to=1024" alt="Timeline" width="100%"></a><br>
+<a href="https://props.tools/shopify/timeline"><img src="/media/sections/timeline.webp" alt="Timeline" width="100%"></a><br>
 <b>Timeline</b><br>
 <sub>An animated timeline that supports text blocks, images, and links.</sub><br>
 <sub><a href="https://props.tools/shopify/timeline">Preview</a> · <a href="sections/content/props-timeline.liquid">Code</a></sub>
@@ -110,16 +110,16 @@ Each one links to a live preview on the PROPS site and to its code in this repos
 <table>
 <tr>
 <td width="33%" valign="top">
-<a href="https://props.tools/shopify/before-after-slider"><img src="https://framerusercontent.com/images/VbpLGlHaelSt9rv0RwDO9k04nY.png?scale-down-to=1024" alt="Before / After Slider" width="100%"></a><br>
-<b>Before / After Slider</b><br>
+<a href="https://props.tools/shopify/before-after-slider"><img src="/media/sections/before-after-slider.webp" alt="Before and After Slider" width="100%"></a><br>
+<b>Before and After Slider</b><br>
 <sub>An interactive image comparison slider with draggable handle.</sub><br>
 <sub><a href="https://props.tools/shopify/before-after-slider">Preview</a> · <a href="sections/interactive/props-before-after.liquid">Code</a></sub>
 </td>
 <td width="33%" valign="top">
-<a href="https://props.tools/shopify/ticker-%28infinite-loop%29"><img src="https://framerusercontent.com/images/8lcYh0xAwc3zMBZbNwoMucLT9qY.png?scale-down-to=1024" alt="Ticker (Infinite Loop)" width="100%"></a><br>
-<b>Ticker (Infinite Loop)</b><br>
+<a href="https://props.tools/shopify/scrolling-marquee"><img src="/media/sections/scrolling-marquee.webp" alt="Scrolling Marquee" width="100%"></a><br>
+<b>Scrolling Marquee</b><br>
 <sub>Infinite-scrolling horizontal ticker for images, text, or a mix of both.</sub><br>
-<sub><a href="https://props.tools/shopify/ticker-%28infinite-loop%29">Preview</a> · <a href="sections/interactive/props-ticker.liquid">Code</a></sub>
+<sub><a href="https://props.tools/shopify/scrolling-marquee">Preview</a> · <a href="sections/interactive/props-ticker.liquid">Code</a></sub>
 </td>
 <td width="33%"></td>
 </tr>
@@ -136,7 +136,7 @@ Each one links to a live preview on the PROPS site and to its code in this repos
 ### Paste
 
 2. **Open the code editor.** In your Shopify admin, go to **Online Store → Themes**, press the **⋯** button beside **Customize** and choose **Edit code**.
-3. **Create a file.** In the **Sections** folder, choose **Add a new section** and name it after the file, for example `props-bg-media-hero`. Shopify adds the `.liquid` ending.
+3. **Create a file.** In the **Sections** folder, choose **Add a new section** and name it after the file, for example `props-collage-hero`. Shopify adds the `.liquid` ending.
 4. **Paste and save.** Replace the starter code Shopify generates with the code you copied, then save.
 
 ### Place
