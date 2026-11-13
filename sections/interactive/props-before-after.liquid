@@ -1,4 +1,4 @@
-{% comment %} PROPS 1.0.2 | props.tools | MIT license, github.com/hobi-design/props {% endcomment %}
+{% comment %} PROPS 1.0.4 | props.tools | MIT license, github.com/hobi-design/props {% endcomment %}
 {%- comment -%}
   Before and After Slider | PROPS — https://props.tools/
 {%- endcomment -%}
@@ -25,7 +25,7 @@
       "type": "text",
       "id": "alt_before",
       "label": "Before Image Alt Text",
-      "default": "Before"
+      "info": "Leave blank to use the image's own alt text from Shopify."
     },
     {
       "type": "image_picker",
@@ -36,7 +36,7 @@
       "type": "text",
       "id": "alt_after",
       "label": "After Image Alt Text",
-      "default": "After"
+      "info": "Leave blank to use the image's own alt text from Shopify."
     },
     {
       "type": "header",
@@ -267,14 +267,18 @@
     -webkit-user-select: none;
     touch-action: pan-y;
     cursor: ew-resize;
-    {% unless section.settings.aspect_ratio == 'auto' %}
-      aspect-ratio: {{ section.settings.aspect_ratio }};
-    {% endunless %}
   }
+
+  {% unless section.settings.aspect_ratio == 'auto' %}
+    .props-before-after-{{ section.id }} .props-before-after-wrapper {
+      aspect-ratio: {{ section.settings.aspect_ratio }};
+    }
+  {% endunless %}
 
   .props-before-after-wrapper:focus-visible {
     outline: 2px solid var(--props-ba-handle-color);
     outline-offset: 4px;
+    box-shadow: 0 0 0 6px #000;
   }
 
   .props-before-after-layer {
@@ -306,13 +310,13 @@
   }
 
   {% if section.settings.aspect_ratio == 'auto' %}
-    .props-before-after-layer--after {
+    .props-before-after-{{ section.id }} .props-before-after-layer--after {
       position: relative;
     }
-    .props-before-after-img--after {
+    .props-before-after-{{ section.id }} .props-before-after-img--after {
       visibility: hidden;
     }
-    .props-before-after-img--after-visible {
+    .props-before-after-{{ section.id }} .props-before-after-img--after-visible {
       visibility: visible;
       position: absolute;
       top: 0;
@@ -379,11 +383,6 @@
 
   .props-before-after-label {
     position: absolute;
-    {% if section.settings.label_position == 'top' %}
-      top: 16px;
-    {% else %}
-      bottom: 16px;
-    {% endif %}
     z-index: 4;
     padding: 6px 14px;
     font-size: var(--props-ba-label-size);
@@ -408,6 +407,14 @@
     opacity: 0;
   }
 
+  .props-before-after-{{ section.id }} .props-before-after-label {
+    {% if section.settings.label_position == 'top' %}
+      top: 16px;
+    {% else %}
+      bottom: 16px;
+    {% endif %}
+  }
+
   .props-before-after-label--before {
     left: 16px;
   }
@@ -418,12 +425,14 @@
 
   @media screen and (max-width: 749px) {
     .props-before-after-label {
+      padding: 4px 10px;
+    }
+    .props-before-after-{{ section.id }} .props-before-after-label {
       {% if section.settings.label_position == 'top' %}
         top: 12px;
       {% else %}
         bottom: 12px;
       {% endif %}
-      padding: 4px 10px;
     }
     .props-before-after-label--before {
       left: 12px;
@@ -553,6 +562,8 @@
     var id = container.getAttribute('data-section-id');
     if (!id) return;
 
+    if (container._propsBeforeAfterCleanup) container._propsBeforeAfterCleanup();
+
     var wrapper = document.getElementById('props-ba-' + id);
     if (!wrapper) return;
 
@@ -565,6 +576,14 @@
     var isDragging = false;
     var wrapperRect = null;
     var hasAnimated = false;
+    var observer = null;
+    var animateTimer = null;
+    var removers = [];
+
+    var on = function (target, eventName, handler, options) {
+      target.addEventListener(eventName, handler, options);
+      removers.push(function () { target.removeEventListener(eventName, handler, options); });
+    };
 
     var clamp = function (val, min, max) {
       return Math.min(max, Math.max(min, val));
@@ -584,14 +603,14 @@
       hasAnimated = true;
       wrapper.classList.add('is-animating');
       setPosition(initialPos);
-      setTimeout(function () {
+      animateTimer = setTimeout(function () {
         wrapper.classList.remove('is-animating');
         wrapper.classList.add('is-ready');
       }, 650);
     };
 
     if ('IntersectionObserver' in window) {
-      var observer = new IntersectionObserver(
+      observer = new IntersectionObserver(
         function (entries) {
           entries.forEach(function (entry) {
             if (entry.isIntersecting) {
@@ -635,18 +654,19 @@
       wrapper.classList.remove('is-active');
     };
 
-    wrapper.addEventListener('mousedown', function (e) {
+    on(wrapper, 'mousedown', function (e) {
       e.preventDefault();
       onStart(e.clientX);
     });
-    document.addEventListener('mousemove', function (e) {
+    on(document, 'mousemove', function (e) {
       if (!isDragging) return;
       e.preventDefault();
       onMove(e.clientX);
     });
-    document.addEventListener('mouseup', onEnd);
+    on(document, 'mouseup', onEnd);
 
-    wrapper.addEventListener(
+    on(
+      wrapper,
       'touchstart',
       function (e) {
         if (e.touches.length === 1) {
@@ -655,7 +675,8 @@
       },
       { passive: true }
     );
-    document.addEventListener(
+    on(
+      document,
       'touchmove',
       function (e) {
         if (!isDragging) return;
@@ -665,19 +686,33 @@
       },
       { passive: true }
     );
-    document.addEventListener('touchend', onEnd);
-    document.addEventListener('touchcancel', onEnd);
+    on(document, 'touchend', onEnd);
+    on(document, 'touchcancel', onEnd);
 
-    wrapper.addEventListener('keydown', function (e) {
-      var step = 2;
-      if (e.key === 'ArrowLeft' || e.key === 'Left') {
+    on(wrapper, 'keydown', function (e) {
+      var moves = {
+        ArrowLeft: -2, Left: -2, ArrowDown: -2, Down: -2,
+        ArrowRight: 2, Right: 2, ArrowUp: 2, Up: 2,
+        PageDown: -10, PageUp: 10
+      };
+      if (e.key in moves) {
         e.preventDefault();
-        setPosition(currentPos - step);
-      } else if (e.key === 'ArrowRight' || e.key === 'Right') {
+        setPosition(currentPos + moves[e.key]);
+      } else if (e.key === 'Home') {
         e.preventDefault();
-        setPosition(currentPos + step);
+        setPosition(0);
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        setPosition(100);
       }
     });
+
+    container._propsBeforeAfterCleanup = function () {
+      removers.forEach(function (remove) { remove(); });
+      if (observer) observer.disconnect();
+      clearTimeout(animateTimer);
+      container._propsBeforeAfterCleanup = null;
+    };
   };
 
   document.querySelectorAll('[data-section-type="props-before-after"]').forEach(init);
@@ -685,6 +720,11 @@
   document.addEventListener('shopify:section:load', function (e) {
     var c = e.target.querySelector('[data-section-type="props-before-after"]');
     if (c) init(c);
+  });
+
+  document.addEventListener('shopify:section:unload', function (e) {
+    var c = e.target.querySelector('[data-section-type="props-before-after"]');
+    if (c && c._propsBeforeAfterCleanup) c._propsBeforeAfterCleanup();
   });
 })();
 {% endjavascript %}

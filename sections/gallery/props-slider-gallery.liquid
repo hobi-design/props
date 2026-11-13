@@ -1,4 +1,4 @@
-{% comment %} PROPS 1.0.3 | props.tools | MIT license, github.com/hobi-design/props {% endcomment %}
+{% comment %} PROPS 1.0.4 | props.tools | MIT license, github.com/hobi-design/props {% endcomment %}
 {%- comment -%}
   Image Slider with Text | PROPS — https://props.tools/
 {%- endcomment -%}
@@ -305,7 +305,7 @@
   }
 
   @media screen and (min-width: 750px) {
-    .props-slider-gallery-content {
+    .props-slider-gallery-{{ section.id }} .props-slider-gallery-content {
       flex: 0 0 {{ section.settings.desktop_text_width }}%;
       position: sticky;
       top: 40px;
@@ -358,6 +358,12 @@
 
   .props-slider-gallery-slider::-webkit-scrollbar {
     display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .props-slider-gallery-slider {
+      scroll-behavior: auto;
+    }
   }
 
   .props-slider-gallery-item {
@@ -456,6 +462,12 @@
     inset: 0;
     z-index: 2;
   }
+
+  .props-slider-gallery-link:focus-visible {
+    outline: 2px solid #FFFFFF;
+    outline-offset: -4px;
+    box-shadow: inset 0 0 0 2px #121212;
+  }
 {% endstyle %}
 
 <div class="props-slider-gallery-{{ section.id }}" data-section-type="props-slider-gallery" data-section-id="{{ section.id }}">
@@ -488,7 +500,7 @@
               {% endif %}
             </div>
             {% if block.settings.link != blank %}
-              <a href="{{ block.settings.link }}" class="props-slider-gallery-link" aria-label="View gallery item"></a>
+              <a href="{{ block.settings.link }}" class="props-slider-gallery-link" aria-label="{{ block.settings.alt_text | default: block.settings.image.alt | default: 'View gallery item' | escape }}"></a>
             {% endif %}
           </div>
         {% endfor %}
@@ -496,18 +508,18 @@
 
       <div class="props-slider-gallery-controls">
         <div class="props-slider-gallery-nav">
-          <button class="props-slider-gallery-arrow" id="Prev-{{ section.id }}" aria-label="Previous slide">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+          <button type="button" class="props-slider-gallery-arrow" id="Prev-{{ section.id }}" aria-label="Previous slide">
+            <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
           </button>
-          <button class="props-slider-gallery-arrow" id="Next-{{ section.id }}" aria-label="Next slide">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+          <button type="button" class="props-slider-gallery-arrow" id="Next-{{ section.id }}" aria-label="Next slide">
+            <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
           </button>
         </div>
 
         {% if section.settings.show_dots %}
           <div class="props-slider-gallery-dots" id="Dots-{{ section.id }}">
             {% for block in section.blocks %}
-              <button class="props-slider-gallery-dot {% if forloop.first %}active{% endif %}" data-index="{{ forloop.index0 }}" aria-label="Go to slide {{ forloop.index }}"></button>
+              <button type="button" class="props-slider-gallery-dot {% if forloop.first %}active{% endif %}" data-index="{{ forloop.index0 }}" aria-label="Go to slide {{ forloop.index }}"></button>
             {% endfor %}
           </div>
         {% endif %}
@@ -530,6 +542,8 @@
 
     if (!slider) return;
 
+    const scrollBehavior = () => (window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth');
+
     const getItemStep = () => {
       const gap = parseInt(getComputedStyle(slider).getPropertyValue('gap') || 0);
       const item = slider.querySelector('.props-slider-gallery-item');
@@ -546,14 +560,14 @@
     if (nextBtn) {
       nextBtn.addEventListener('click', () => {
         const step = getItemStep();
-        if (step) slider.scrollBy({ left: step, behavior: 'smooth' });
+        if (step) slider.scrollBy({ left: step, behavior: scrollBehavior() });
       });
     }
 
     if (prevBtn) {
       prevBtn.addEventListener('click', () => {
         const step = getItemStep();
-        if (step) slider.scrollBy({ left: -step, behavior: 'smooth' });
+        if (step) slider.scrollBy({ left: -step, behavior: scrollBehavior() });
       });
     }
 
@@ -566,7 +580,7 @@
     dots.forEach((dot, i) => {
       dot.addEventListener('click', () => {
         const step = getItemStep();
-        if (step) slider.scrollTo({ left: i * step, behavior: 'smooth' });
+        if (step) slider.scrollTo({ left: i * step, behavior: scrollBehavior() });
       });
     });
   };

@@ -1,4 +1,4 @@
-{% comment %} PROPS 1.0.1 | props.tools | MIT license, github.com/hobi-design/props {% endcomment %}
+{% comment %} PROPS 1.0.2 | props.tools | MIT license, github.com/hobi-design/props {% endcomment %}
 {%- comment -%}
   Scrolling Logo Carousel | PROPS — https://props.tools/
 {%- endcomment -%}
@@ -468,6 +468,13 @@
     position: relative;
   }
 
+  @supports (overflow: clip) {
+    .props-logo-marquee-logos {
+      overflow-x: clip;
+      overflow-y: visible;
+    }
+  }
+
   .props-logo-marquee-track {
     display: flex;
     align-items: center;
@@ -477,12 +484,12 @@
   }
 
   {% if section.settings.draggable %}
-    .props-logo-marquee-logos {
+    .props-logo-marquee-{{ section.id }} .props-logo-marquee-logos {
       cursor: grab;
       -webkit-user-select: none;
       user-select: none;
     }
-    .props-logo-marquee-logos.is-dragging {
+    .props-logo-marquee-{{ section.id }} .props-logo-marquee-logos.is-dragging {
       cursor: grabbing;
     }
   {% endif %}
@@ -527,20 +534,80 @@
     white-space: nowrap;
   }
 
+  .props-logo-marquee-item:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: -2px;
+  }
+
+  .props-logo-marquee-pause {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    background: rgba(0, 0, 0, 0.5);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    color: #fff;
+    z-index: 2;
+    transition: opacity 0.2s ease;
+  }
+
+  @media (hover: hover) {
+    .props-logo-marquee-pause:hover {
+      opacity: 0.7;
+    }
+  }
+
+  .props-logo-marquee-pause:focus-visible {
+    outline: 2px solid #FFFFFF;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px #121212;
+  }
+
+  .props-logo-marquee-pause svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .props-logo-marquee-pause-icon-play {
+    display: none;
+  }
+
+  .props-logo-marquee-pause.is-paused .props-logo-marquee-pause-icon-pause {
+    display: none;
+  }
+
+  .props-logo-marquee-pause.is-paused .props-logo-marquee-pause-icon-play {
+    display: block;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .props-logo-marquee-pause {
+      display: none;
+    }
+  }
+
   @media screen and (min-width: 990px) {
     {% if section.settings.layout_mode == 'inline' %}
-      .props-logo-marquee-wrapper {
+      .props-logo-marquee-{{ section.id }} .props-logo-marquee-wrapper {
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
       }
 
-      .props-logo-marquee-header {
+      .props-logo-marquee-{{ section.id }} .props-logo-marquee-header {
         width: 35%;
         flex-shrink: 0;
       }
 
-      .props-logo-marquee-logos {
+      .props-logo-marquee-{{ section.id }} .props-logo-marquee-logos {
         width: 65%;
       }
     {% endif %}
@@ -570,22 +637,28 @@
         {% endif %}
 
         <div class="props-logo-marquee-logos">
-          <div class="props-logo-marquee-track" aria-label="Scrolling logos">
+          <div class="props-logo-marquee-track">
             {% for copy in (1..2) %}
               {% for block in section.blocks %}
                 {% liquid
+                  assign logo_name = block.settings.alt_text | default: block.settings.image.alt | strip
+                  if block.settings.image == blank
+                    assign logo_name = ''
+                  endif
                   assign has_link = false
                   if block.settings.link != blank
-                    assign has_link = true
+                    if logo_name != blank or block.settings.logo_text != blank
+                      assign has_link = true
+                    endif
                   endif
 
                   assign placeholder_index = forloop.index | modulo: 6
                 %}
 
                 {% if has_link %}
-                  <a href="{{ block.settings.link }}" class="props-logo-marquee-item" {% if copy == 1 %}{{ block.shopify_attributes }}{% endif %} tabindex="-1">
+                  <a href="{{ block.settings.link }}" class="props-logo-marquee-item" {% if copy == 1 %}{{ block.shopify_attributes }}{% else %}tabindex="-1" aria-hidden="true"{% endif %}>
                 {% else %}
-                  <div class="props-logo-marquee-item" {% if copy == 1 %}{{ block.shopify_attributes }}{% endif %}>
+                  <div class="props-logo-marquee-item" {% if copy == 1 %}{{ block.shopify_attributes }}{% else %}aria-hidden="true"{% endif %}>
                 {% endif %}
 
                   {% if block.settings.image != blank %}
@@ -597,7 +670,7 @@
                       sizes: '(min-width: 990px) 15vw, (min-width: 750px) 25vw, 50vw'
                     }}
                   {% else %}
-                    <svg class="props-logo-marquee-img" width="120" height="40" viewBox="0 0 120 40" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="max-height: 40px;">
+                    <svg class="props-logo-marquee-img" aria-hidden="true" focusable="false" width="120" height="40" viewBox="0 0 120 40" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="max-height: 40px;">
                       {% case placeholder_index %}
                         {% when 1 %}
                           <path d="M20 20L10 0H30L20 20ZM20 20L30 40H10L20 20Z" fill="currentColor"/>
@@ -635,6 +708,12 @@
               {% endfor %}
             {% endfor %}
           </div>
+          {% if section.blocks.size > 0 %}
+            <button type="button" class="props-logo-marquee-pause" aria-label="Pause ticker">
+              <svg class="props-logo-marquee-pause-icon-pause" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+              <svg class="props-logo-marquee-pause-icon-play" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,4 20,12 6,20"/></svg>
+            </button>
+          {% endif %}
         </div>
 
       </div>
@@ -656,6 +735,7 @@
     var track = container.querySelector('.props-logo-marquee-track');
     if (!track) return;
 
+    var pauseBtn = container.querySelector('.props-logo-marquee-pause');
     var speedDesktop = parseFloat(container.getAttribute('data-speed')) || 50;
     var speedMobile = parseFloat(container.getAttribute('data-speed-mobile')) || 35;
     var direction = container.getAttribute('data-direction') || 'left';
@@ -667,7 +747,15 @@
     var rafId = null;
     var lastTime = 0;
     var hovering = false;
+    var focused = false;
+    var paused = false;
     var isDragging = false;
+    var removers = [];
+
+    var on = function (target, eventName, handler, options) {
+      target.addEventListener(eventName, handler, options);
+      removers.push(function () { target.removeEventListener(eventName, handler, options); });
+    };
 
     var getSpeed = function () {
       return window.innerWidth < 750 ? speedMobile : speedDesktop;
@@ -692,8 +780,12 @@
       }
     };
 
+    var apply = function () {
+      track.style.transform = 'translateX(' + offset + 'px)';
+    };
+
     var tick = function (now) {
-      if (reducedMotion.matches || isDragging || hovering) {
+      if (reducedMotion.matches || isDragging || hovering || focused || paused) {
         lastTime = 0;
         rafId = requestAnimationFrame(tick);
         return;
@@ -719,7 +811,7 @@
       }
 
       wrapOffset();
-      track.style.transform = 'translateX(' + offset + 'px)';
+      apply();
       rafId = requestAnimationFrame(tick);
     };
 
@@ -728,16 +820,54 @@
     var hoverTarget = logosWrapper || container;
 
     if (pauseOnHover) {
-      hoverTarget.addEventListener('mouseenter', function () { hovering = true; });
-      hoverTarget.addEventListener('mouseleave', function () { hovering = false; lastTime = 0; });
+      on(hoverTarget, 'mouseenter', function () { hovering = true; });
+      on(hoverTarget, 'mouseleave', function () { hovering = false; lastTime = 0; });
     }
 
-    if (draggable && hoverTarget) {
+    if (pauseBtn) {
+      on(pauseBtn, 'click', function () {
+        paused = !paused;
+        pauseBtn.classList.toggle('is-paused', paused);
+        pauseBtn.setAttribute('aria-label', paused ? 'Play ticker' : 'Pause ticker');
+        lastTime = 0;
+      });
+    }
+
+    on(track, 'focusin', function (e) {
+      focused = true;
+      hoverTarget.scrollLeft = 0;
+      var item = e.target.closest('.props-logo-marquee-item');
+      if (!item) return;
+      var box = hoverTarget.getBoundingClientRect();
+      var rect = item.getBoundingClientRect();
+      if (rect.left < box.left || rect.right > box.right) {
+        offset = Math.min(0, -(item.offsetLeft - track.offsetLeft));
+        apply();
+      }
+    });
+
+    on(track, 'focusout', function (e) {
+      if (!e.relatedTarget || !track.contains(e.relatedTarget)) {
+        focused = false;
+        lastTime = 0;
+      }
+    });
+
+    on(hoverTarget, 'scroll', function () { hoverTarget.scrollLeft = 0; });
+
+    if (draggable) {
       var startX = 0;
       var dragStartOffset = 0;
+      var moved = false;
 
       var onStart = function (e) {
+        if (pauseBtn && pauseBtn.contains(e.target)) return;
+        if (e.type === 'mousedown') {
+          if (e.button !== 0) return;
+          e.preventDefault();
+        }
         isDragging = true;
+        moved = false;
         hoverTarget.classList.add('is-dragging');
         startX = e.touches ? e.touches[0].clientX : e.clientX;
         dragStartOffset = offset;
@@ -746,9 +876,10 @@
       var onMove = function (e) {
         if (!isDragging) return;
         var x = e.touches ? e.touches[0].clientX : e.clientX;
+        if (Math.abs(x - startX) > 5) moved = true;
         offset = dragStartOffset + (x - startX);
         wrapOffset();
-        track.style.transform = 'translateX(' + offset + 'px)';
+        apply();
       };
 
       var onEnd = function () {
@@ -758,20 +889,30 @@
         lastTime = 0;
       };
 
-      hoverTarget.addEventListener('mousedown', onStart);
-      hoverTarget.addEventListener('mousemove', onMove);
-      hoverTarget.addEventListener('mouseup', onEnd);
-      hoverTarget.addEventListener('mouseleave', function () {
+      on(hoverTarget, 'mousedown', onStart);
+      on(hoverTarget, 'mousemove', onMove);
+      on(hoverTarget, 'mouseup', onEnd);
+      on(hoverTarget, 'mouseleave', function () {
         if (isDragging) onEnd();
       });
+      on(hoverTarget, 'click', function (e) {
+        if (!moved) return;
+        moved = false;
+        e.preventDefault();
+        e.stopPropagation();
+      }, true);
 
-      hoverTarget.addEventListener('touchstart', onStart, { passive: true });
-      hoverTarget.addEventListener('touchmove', onMove, { passive: true });
-      hoverTarget.addEventListener('touchend', onEnd);
+      on(hoverTarget, 'touchstart', onStart, { passive: true });
+      on(hoverTarget, 'touchmove', onMove, { passive: true });
+      on(hoverTarget, 'touchend', onEnd);
     }
 
     container._propsMarqueeCleanup = function () {
       cancelAnimationFrame(rafId);
+      removers.forEach(function (remove) { remove(); });
+      track.style.transform = '';
+      hoverTarget.classList.remove('is-dragging');
+      container._propsMarqueeCleanup = null;
     };
   };
 
@@ -780,6 +921,11 @@
   document.addEventListener('shopify:section:load', function (e) {
     var c = e.target.querySelector('[data-section-type="props-logo-marquee"]');
     if (c) init(c);
+  });
+
+  document.addEventListener('shopify:section:unload', function (e) {
+    var c = e.target.querySelector('[data-section-type="props-logo-marquee"]');
+    if (c && c._propsMarqueeCleanup) c._propsMarqueeCleanup();
   });
 })();
 {% endjavascript %}

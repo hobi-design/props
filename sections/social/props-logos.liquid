@@ -1,4 +1,4 @@
-{% comment %} PROPS 1.0.1 | props.tools | MIT license, github.com/hobi-design/props {% endcomment %}
+{% comment %} PROPS 1.0.2 | props.tools | MIT license, github.com/hobi-design/props {% endcomment %}
 {%- comment -%}
   Logo Grid | PROPS — https://props.tools/
 {%- endcomment -%}
@@ -454,18 +454,18 @@
 
   @media screen and (min-width: 990px) {
     {% if section.settings.layout_mode == 'inline' %}
-      .props-logo-wrapper {
+      .props-logo-showcase-{{ section.id }} .props-logo-wrapper {
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
       }
 
-      .props-logo-header {
+      .props-logo-showcase-{{ section.id }} .props-logo-header {
         width: 35%;
         flex-shrink: 0;
       }
 
-      .props-logo-grid {
+      .props-logo-showcase-{{ section.id }} .props-logo-grid {
         width: 65%;
       }
     {% endif %}
@@ -497,9 +497,15 @@
         <div class="props-logo-grid">
           {% for block in section.blocks %}
             {% liquid
+              assign logo_name = block.settings.alt_text | default: block.settings.image.alt | strip
+              if block.settings.image == blank
+                assign logo_name = ''
+              endif
               assign has_link = false
               if block.settings.link != blank
-                assign has_link = true
+                if logo_name != blank or block.settings.logo_text != blank
+                  assign has_link = true
+                endif
               endif
 
               assign placeholder_index = forloop.index | modulo: 6
@@ -520,7 +526,7 @@
                   sizes: '(min-width: 990px) 15vw, (min-width: 750px) 25vw, 50vw'
                 }}
               {% else %}
-                <svg class="props-logo-img" width="120" height="40" viewBox="0 0 120 40" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="max-height: 40px;">
+                <svg class="props-logo-img" aria-hidden="true" focusable="false" width="120" height="40" viewBox="0 0 120 40" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="max-height: 40px;">
                   {% case placeholder_index %}
                     {% when 1 %}
                       <path d="M20 20L10 0H30L20 20ZM20 20L30 40H10L20 20Z" fill="currentColor"/>

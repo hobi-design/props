@@ -1,4 +1,4 @@
-{% comment %} PROPS 1.0.2 | props.tools | MIT license, github.com/hobi-design/props {% endcomment %}
+{% comment %} PROPS 1.0.3 | props.tools | MIT license, github.com/hobi-design/props {% endcomment %}
 {%- comment -%}
   Image Gallery Grid | PROPS — https://props.tools/
 {%- endcomment -%}
@@ -319,9 +319,18 @@
     overflow: hidden;
     display: block;
     backface-visibility: hidden;
-    {% unless section.settings.aspect_ratio == 'auto' %}
-      aspect-ratio: {{ section.settings.aspect_ratio }};
-    {% endunless %}
+  }
+
+  .props-gallery-media-wrapper {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .props-gallery-item:focus-within {
+    outline: 2px solid #FFFFFF;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px #121212;
   }
 
   .props-gallery-img {
@@ -331,12 +340,19 @@
     object-fit: cover;
     transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     will-change: transform;
-    {% unless section.settings.aspect_ratio == 'auto' %}
+  }
+
+  {% unless section.settings.aspect_ratio == 'auto' %}
+    .props-gallery-{{ section.id }} .props-gallery-media {
+      aspect-ratio: {{ section.settings.aspect_ratio }};
+    }
+
+    .props-gallery-{{ section.id }} .props-gallery-img {
       position: absolute;
       top: 0;
       left: 0;
-    {% endunless %}
-  }
+    }
+  {% endunless %}
 
   .props-gallery-placeholder {
     aspect-ratio: 1200 / 630;
@@ -361,7 +377,7 @@
   }
 
   {% if section.settings.caption_position == 'overlay' %}
-    .props-gallery-overlay-bg {
+    .props-gallery-{{ section.id }} .props-gallery-overlay-bg {
       position: absolute;
       inset: 0;
       background-color: var(--props-overlay-color);
@@ -371,7 +387,7 @@
       pointer-events: none;
     }
 
-    .props-gallery-caption {
+    .props-gallery-{{ section.id }} .props-gallery-caption {
       position: absolute;
       inset: 0;
       display: flex;
@@ -384,14 +400,25 @@
       transition: opacity 0.3s ease;
     }
 
-    .props-gallery-item:hover .props-gallery-overlay-bg {
+    .props-gallery-{{ section.id }} .props-gallery-item:hover .props-gallery-overlay-bg,
+    .props-gallery-{{ section.id }} .props-gallery-item:focus-within .props-gallery-overlay-bg {
       opacity: var(--props-overlay-opacity);
     }
-    .props-gallery-item:hover .props-gallery-caption {
+    .props-gallery-{{ section.id }} .props-gallery-item:hover .props-gallery-caption,
+    .props-gallery-{{ section.id }} .props-gallery-item:focus-within .props-gallery-caption {
       opacity: 1;
     }
+
+    @media (hover: none) {
+      .props-gallery-{{ section.id }} .props-gallery-overlay-bg {
+        opacity: var(--props-overlay-opacity);
+      }
+      .props-gallery-{{ section.id }} .props-gallery-caption {
+        opacity: 1;
+      }
+    }
   {% else %}
-    .props-gallery-caption {
+    .props-gallery-{{ section.id }} .props-gallery-caption {
       margin-top: 12px;
       text-align: {{ section.settings.text_align }};
       color: {{ section.settings.text_color }};
@@ -400,7 +427,7 @@
 
   {% if section.settings.enable_swipe %}
     @media screen and (max-width: 749px) {
-      .props-gallery-grid.props-gallery-swipe {
+      .props-gallery-{{ section.id }} .props-gallery-grid.props-gallery-swipe {
         display: flex;
         overflow-x: auto;
         scroll-snap-type: x mandatory;
@@ -408,22 +435,22 @@
         scrollbar-width: none;
         gap: var(--props-grid-gap);
       }
-      .props-gallery-grid.props-gallery-swipe::-webkit-scrollbar {
+      .props-gallery-{{ section.id }} .props-gallery-grid.props-gallery-swipe::-webkit-scrollbar {
         display: none;
       }
-      .props-gallery-grid.props-gallery-swipe .props-gallery-item {
+      .props-gallery-{{ section.id }} .props-gallery-grid.props-gallery-swipe .props-gallery-item {
         flex: 0 0 70vw;
         width: 70vw;
         scroll-snap-align: center;
       }
-      .props-gallery-dots {
+      .props-gallery-{{ section.id }} .props-gallery-dots {
         display: flex;
         justify-content: center;
         gap: 8px;
         margin-top: 8px;
         width: 100%;
       }
-      .props-gallery-dot {
+      .props-gallery-{{ section.id }} .props-gallery-dot {
         width: 8px;
         height: 8px;
         border-radius: 50%;
@@ -434,16 +461,25 @@
         transition: opacity 0.2s;
         cursor: pointer;
       }
-      .props-gallery-dot.active {
+      .props-gallery-{{ section.id }} .props-gallery-dot.active {
         opacity: 1;
       }
     }
     @media screen and (min-width: 750px) {
-      .props-gallery-dots { display: none; }
+      .props-gallery-{{ section.id }} .props-gallery-dots { display: none; }
     }
   {% else %}
-    .props-gallery-dots { display: none; }
+    .props-gallery-{{ section.id }} .props-gallery-dots { display: none; }
   {% endif %}
+
+  @media (prefers-reduced-motion: reduce) {
+    .props-gallery-img,
+    .props-gallery-overlay-bg,
+    .props-gallery-caption,
+    .props-gallery-dot {
+      transition: none !important;
+    }
+  }
 {% endstyle %}
 
 <div class="props-gallery-{{ section.id }}" data-section-type="props-gallery" data-section-id="{{ section.id }}">
@@ -454,17 +490,21 @@
     >
       {% for block in section.blocks %}
         {%- liquid
+           assign link_name = block.settings.image.alt | default: block.settings.caption | strip
+           if block.settings.image == blank
+             assign link_name = block.settings.caption | strip
+           endif
            assign has_link = false
-           if block.settings.link != blank
+           if block.settings.link != blank and link_name != blank
              assign has_link = true
            endif
         -%}
 
         <div class="props-gallery-item {% if has_link %}has-link{% endif %}" {{ block.shopify_attributes }}>
           {%- if has_link -%}
-            <a href="{{ block.settings.link }}" class="props-gallery-media-wrapper" style="display: contents;">
+            <a href="{{ block.settings.link }}" class="props-gallery-media-wrapper"{% if block.settings.image == blank or block.settings.image.alt == blank %} aria-label="{{ link_name | escape }}"{% endif %}>
           {%- else -%}
-            <div class="props-gallery-media-wrapper" style="display: contents;">
+            <div class="props-gallery-media-wrapper">
           {%- endif -%}
 
             <div class="props-gallery-media">
@@ -549,7 +589,8 @@
       dot.addEventListener('click', () => {
         const items = grid.querySelectorAll('.props-gallery-item');
         if (items[index]) {
-          items[index].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+          const smooth = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          items[index].scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'nearest', inline: 'center' });
         }
       });
     });

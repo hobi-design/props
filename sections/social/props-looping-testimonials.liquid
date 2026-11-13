@@ -1,4 +1,4 @@
-{% comment %} PROPS 1.0.1 | props.tools | MIT license, github.com/hobi-design/props {% endcomment %}
+{% comment %} PROPS 1.0.2 | props.tools | MIT license, github.com/hobi-design/props {% endcomment %}
 {%- comment -%}
   Scrolling Testimonials | PROPS — https://props.tools/
 {%- endcomment -%}
@@ -517,6 +517,7 @@
   .props-looping-testimonials-ticker {
     width: 100%;
     overflow: hidden;
+    overflow: clip;
     position: relative;
   }
 
@@ -529,12 +530,12 @@
   }
 
   {% if section.settings.draggable %}
-    .props-looping-testimonials-ticker {
+    .props-looping-testimonials-{{ section.id }} .props-looping-testimonials-ticker {
       cursor: grab;
       -webkit-user-select: none;
       user-select: none;
     }
-    .props-looping-testimonials-ticker.is-dragging {
+    .props-looping-testimonials-{{ section.id }} .props-looping-testimonials-ticker.is-dragging {
       cursor: grabbing;
     }
   {% endif %}
@@ -627,6 +628,60 @@
     color: inherit;
     opacity: 0.6;
   }
+
+  .props-looping-testimonials-pause {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    background: rgba(0, 0, 0, 0.5);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    color: #fff;
+    z-index: 2;
+    transition: opacity 0.2s ease;
+  }
+
+  @media (hover: hover) {
+    .props-looping-testimonials-pause:hover {
+      opacity: 0.7;
+    }
+  }
+
+  .props-looping-testimonials-pause:focus-visible {
+    outline: 2px solid #FFFFFF;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px #121212;
+  }
+
+  .props-looping-testimonials-pause svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .props-looping-testimonials-pause-icon-play {
+    display: none;
+  }
+
+  .props-looping-testimonials-pause.is-paused .props-looping-testimonials-pause-icon-pause {
+    display: none;
+  }
+
+  .props-looping-testimonials-pause.is-paused .props-looping-testimonials-pause-icon-play {
+    display: block;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .props-looping-testimonials-pause {
+      display: none;
+    }
+  }
 {% endstyle %}
 
 {%- liquid
@@ -672,11 +727,11 @@
 
   {% if has_blocks %}
     <div class="props-looping-testimonials-ticker">
-      <div class="props-looping-testimonials-track" aria-label="Scrolling testimonials">
+      <div class="props-looping-testimonials-track">
         {% for copy in (1..2) %}
           {% for block in section.blocks %}
             {%- assign placeholder_index = forloop.index | modulo: 6 -%}
-            <div class="props-looping-testimonials-card" {% if copy == 1 %}{{ block.shopify_attributes }}{% endif %}>
+            <div class="props-looping-testimonials-card" {% if copy == 1 %}{{ block.shopify_attributes }}{% else %}aria-hidden="true" inert{% endif %}>
 
               <div class="props-looping-testimonials-card-body">
                 {% if block.settings.logo != blank %}
@@ -691,7 +746,7 @@
                   </div>
                 {% else %}
                   <div class="props-looping-testimonials-logo-wrap">
-                    <svg class="props-looping-testimonials-placeholder-logo" width="120" height="40" viewBox="0 0 120 40" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="max-height: 40px;">
+                    <svg class="props-looping-testimonials-placeholder-logo" aria-hidden="true" focusable="false" width="120" height="40" viewBox="0 0 120 40" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="max-height: 40px;">
                       {% case placeholder_index %}
                         {% when 1 %}
                           <path d="M20 20L10 0H30L20 20ZM20 20L30 40H10L20 20Z" fill="currentColor"/>
@@ -751,6 +806,10 @@
           {% endfor %}
         {% endfor %}
       </div>
+      <button type="button" class="props-looping-testimonials-pause" aria-label="Pause ticker">
+        <svg class="props-looping-testimonials-pause-icon-pause" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+        <svg class="props-looping-testimonials-pause-icon-play" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,4 20,12 6,20"/></svg>
+      </button>
     </div>
   {% endif %}
 
@@ -770,6 +829,7 @@
     var track = container.querySelector('.props-looping-testimonials-track');
     if (!track) return;
 
+    var pauseBtn = container.querySelector('.props-looping-testimonials-pause');
     var speedDesktop = parseFloat(container.getAttribute('data-speed')) || 30;
     var speedMobile = parseFloat(container.getAttribute('data-speed-mobile')) || 25;
     var direction = container.getAttribute('data-direction') || 'left';
@@ -781,7 +841,15 @@
     var rafId = null;
     var lastTime = 0;
     var hovering = false;
+    var focused = false;
+    var paused = false;
     var isDragging = false;
+    var removers = [];
+
+    var on = function (target, eventName, handler, options) {
+      target.addEventListener(eventName, handler, options);
+      removers.push(function () { target.removeEventListener(eventName, handler, options); });
+    };
 
     var getSpeed = function () {
       return window.innerWidth < 750 ? speedMobile : speedDesktop;
@@ -806,8 +874,12 @@
       }
     };
 
+    var apply = function () {
+      track.style.transform = 'translateX(' + offset + 'px)';
+    };
+
     var tick = function (now) {
-      if (reducedMotion.matches || isDragging || hovering) {
+      if (reducedMotion.matches || isDragging || hovering || focused || paused) {
         lastTime = 0;
         rafId = requestAnimationFrame(tick);
         return;
@@ -833,7 +905,7 @@
       }
 
       wrapOffset();
-      track.style.transform = 'translateX(' + offset + 'px)';
+      apply();
       rafId = requestAnimationFrame(tick);
     };
 
@@ -842,16 +914,54 @@
     var hoverTarget = tickerWrapper || container;
 
     if (pauseOnHover) {
-      hoverTarget.addEventListener('mouseenter', function () { hovering = true; });
-      hoverTarget.addEventListener('mouseleave', function () { hovering = false; lastTime = 0; });
+      on(hoverTarget, 'mouseenter', function () { hovering = true; });
+      on(hoverTarget, 'mouseleave', function () { hovering = false; lastTime = 0; });
     }
 
-    if (draggable && hoverTarget) {
+    if (pauseBtn) {
+      on(pauseBtn, 'click', function () {
+        paused = !paused;
+        pauseBtn.classList.toggle('is-paused', paused);
+        pauseBtn.setAttribute('aria-label', paused ? 'Play ticker' : 'Pause ticker');
+        lastTime = 0;
+      });
+    }
+
+    on(track, 'focusin', function (e) {
+      focused = true;
+      hoverTarget.scrollLeft = 0;
+      var card = e.target.closest('.props-looping-testimonials-card');
+      if (!card) return;
+      var box = hoverTarget.getBoundingClientRect();
+      var rect = card.getBoundingClientRect();
+      if (rect.left < box.left || rect.right > box.right) {
+        offset = Math.min(0, -(card.offsetLeft - track.offsetLeft));
+        apply();
+      }
+    });
+
+    on(track, 'focusout', function (e) {
+      if (!e.relatedTarget || !track.contains(e.relatedTarget)) {
+        focused = false;
+        lastTime = 0;
+      }
+    });
+
+    on(hoverTarget, 'scroll', function () { hoverTarget.scrollLeft = 0; });
+
+    if (draggable) {
       var startX = 0;
       var dragStartOffset = 0;
+      var moved = false;
 
       var onStart = function (e) {
+        if (pauseBtn && pauseBtn.contains(e.target)) return;
+        if (e.type === 'mousedown') {
+          if (e.button !== 0) return;
+          e.preventDefault();
+        }
         isDragging = true;
+        moved = false;
         hoverTarget.classList.add('is-dragging');
         startX = e.touches ? e.touches[0].clientX : e.clientX;
         dragStartOffset = offset;
@@ -860,9 +970,10 @@
       var onMove = function (e) {
         if (!isDragging) return;
         var x = e.touches ? e.touches[0].clientX : e.clientX;
+        if (Math.abs(x - startX) > 5) moved = true;
         offset = dragStartOffset + (x - startX);
         wrapOffset();
-        track.style.transform = 'translateX(' + offset + 'px)';
+        apply();
       };
 
       var onEnd = function () {
@@ -872,20 +983,30 @@
         lastTime = 0;
       };
 
-      hoverTarget.addEventListener('mousedown', onStart);
-      hoverTarget.addEventListener('mousemove', onMove);
-      hoverTarget.addEventListener('mouseup', onEnd);
-      hoverTarget.addEventListener('mouseleave', function () {
+      on(hoverTarget, 'mousedown', onStart);
+      on(hoverTarget, 'mousemove', onMove);
+      on(hoverTarget, 'mouseup', onEnd);
+      on(hoverTarget, 'mouseleave', function () {
         if (isDragging) onEnd();
       });
+      on(hoverTarget, 'click', function (e) {
+        if (!moved) return;
+        moved = false;
+        e.preventDefault();
+        e.stopPropagation();
+      }, true);
 
-      hoverTarget.addEventListener('touchstart', onStart, { passive: true });
-      hoverTarget.addEventListener('touchmove', onMove, { passive: true });
-      hoverTarget.addEventListener('touchend', onEnd);
+      on(hoverTarget, 'touchstart', onStart, { passive: true });
+      on(hoverTarget, 'touchmove', onMove, { passive: true });
+      on(hoverTarget, 'touchend', onEnd);
     }
 
     container._propsTickerCleanup = function () {
       cancelAnimationFrame(rafId);
+      removers.forEach(function (remove) { remove(); });
+      track.style.transform = '';
+      hoverTarget.classList.remove('is-dragging');
+      container._propsTickerCleanup = null;
     };
   };
 
@@ -894,6 +1015,11 @@
   document.addEventListener('shopify:section:load', function (e) {
     var c = e.target.querySelector('[data-section-type="props-looping-testimonials"]');
     if (c) init(c);
+  });
+
+  document.addEventListener('shopify:section:unload', function (e) {
+    var c = e.target.querySelector('[data-section-type="props-looping-testimonials"]');
+    if (c && c._propsTickerCleanup) c._propsTickerCleanup();
   });
 })();
 {% endjavascript %}

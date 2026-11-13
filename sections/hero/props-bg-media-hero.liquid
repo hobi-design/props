@@ -1,4 +1,4 @@
-{% comment %} PROPS 1.0.2 | props.tools | MIT license, github.com/hobi-design/props {% endcomment %}
+{% comment %} PROPS 1.0.4 | props.tools | MIT license, github.com/hobi-design/props {% endcomment %}
 {%- comment -%}
   Video Background Hero | PROPS — https://props.tools/
 {%- endcomment -%}
@@ -31,6 +31,18 @@
     {
       "type": "header",
       "content": "Typography"
+    },
+    {
+      "type": "select",
+      "id": "heading_tag",
+      "label": "Heading Level",
+      "options": [
+        { "value": "h1", "label": "H1" },
+        { "value": "h2", "label": "H2" },
+        { "value": "h3", "label": "H3" }
+      ],
+      "default": "h1",
+      "info": "Use H1 only once per page (usually the first section)."
     },
     {
       "type": "range",
@@ -455,6 +467,9 @@
     z-index: 2;
     width: var(--props-content-width);
     max-width: 100%;
+  }
+
+  .props-bg-media-hero-{{ section.id }} .props-bg-media-hero-content {
     text-align: {{ section.settings.text_alignment }};
   }
 
@@ -489,9 +504,12 @@
   .props-bg-media-hero-buttons {
     display: flex;
     gap: 12px;
-    justify-content: {{ section.settings.text_alignment }};
     flex-wrap: wrap;
     margin-top: 28px;
+  }
+
+  .props-bg-media-hero-{{ section.id }} .props-bg-media-hero-buttons {
+    justify-content: {{ section.settings.text_alignment }};
   }
 
   .props-bg-media-hero-btn {
@@ -623,7 +641,8 @@
 
   <div class="props-bg-media-hero-content">
     {% if section.settings.heading != blank %}
-      <h1 class="props-bg-media-hero-heading">{{ section.settings.heading | escape }}</h1>
+      {%- assign heading_tag = section.settings.heading_tag | default: 'h1' -%}
+      <{{ heading_tag }} class="props-bg-media-hero-heading">{{ section.settings.heading | escape }}</{{ heading_tag }}>
     {% endif %}
     {% if section.settings.description != blank %}
       <div class="props-bg-media-hero-description">{{ section.settings.description }}</div>
@@ -643,14 +662,19 @@
       <div class="props-bg-media-hero-buttons">
         {% for block in section.blocks %}
           {% if block.type == 'button' and block.settings.label != blank %}
-            <a
-              href="{{ block.settings.link | default: '#' }}"
+            {%- if block.settings.link != blank -%}
+              {%- assign button_tag = 'a' -%}
+            {%- else -%}
+              {%- assign button_tag = 'span' -%}
+            {%- endif -%}
+            <{{ button_tag }}
+              {% if block.settings.link != blank %}href="{{ block.settings.link }}"{% endif %}
               class="props-bg-media-hero-btn props-bg-media-hero-btn-{{ block.settings.style }}"
               style="--btn-bg: {{ block.settings.button_bg }}; --btn-text: {{ block.settings.button_text }}; --btn-hover-bg: {{ block.settings.hover_bg }}; --btn-hover-text: {{ block.settings.hover_text }};"
               {{ block.shopify_attributes }}
             >
               {{ block.settings.label | escape }}
-            </a>
+            </{{ button_tag }}>
           {% endif %}
         {% endfor %}
       </div>
@@ -661,33 +685,71 @@
     <button
       type="button"
       class="props-bg-media-hero-play-pause"
-      aria-label="Pause video"
+      aria-label="{% if media_block.settings.autoplay %}Pause video{% else %}Play video{% endif %}"
       data-playing="{{ media_block.settings.autoplay }}"
-      onclick="(function(btn){var v=btn.closest('[data-section-type=&quot;props-bg-media-hero&quot;]').querySelector('video');if(!v)return;if(v.paused){v.play();btn.setAttribute('aria-label','Pause video');btn.setAttribute('data-playing','true');btn.innerHTML='<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;currentColor&quot;><rect x=&quot;6&quot; y=&quot;4&quot; width=&quot;4&quot; height=&quot;16&quot; rx=&quot;1&quot;/><rect x=&quot;14&quot; y=&quot;4&quot; width=&quot;4&quot; height=&quot;16&quot; rx=&quot;1&quot;/></svg>';}else{v.pause();btn.setAttribute('aria-label','Play video');btn.setAttribute('data-playing','false');btn.innerHTML='<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;currentColor&quot;><polygon points=&quot;6 3 20 12 6 21 6 3&quot;/></svg>';}})(this)"
     >
       {% if media_block.settings.autoplay %}
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
       {% else %}
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><polygon points="6 3 20 12 6 21 6 3"/></svg>
       {% endif %}
     </button>
   {% endif %}
 
 </div>
 
-<script>
-  (function() {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      var vid = document.getElementById('props-bg-media-hero-video-{{ section.id }}');
-      if (vid) {
-        vid.pause();
-        var btn = vid.closest('[data-section-type="props-bg-media-hero"]').querySelector('.props-bg-media-hero-play-pause');
-        if (btn) {
-          btn.setAttribute('aria-label', 'Play video');
-          btn.setAttribute('data-playing', 'false');
-          btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></svg>';
-        }
-      }
+{% javascript %}
+(function () {
+  var PAUSE = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>';
+  var PLAY = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>';
+  var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  function init(container) {
+    if (container._propsBgMediaHeroCleanup) container._propsBgMediaHeroCleanup();
+    var vid = container.querySelector('.props-bg-media-hero-video');
+    var btn = container.querySelector('.props-bg-media-hero-play-pause');
+    if (!vid || !btn) return;
+
+    function sync() {
+      var paused = vid.paused;
+      btn.setAttribute('aria-label', paused ? 'Play video' : 'Pause video');
+      btn.setAttribute('data-playing', paused ? 'false' : 'true');
+      btn.innerHTML = paused ? PLAY : PAUSE;
     }
-  })();
-</script>
+    function play() {
+      var result = vid.play();
+      if (result && typeof result.catch === 'function') result.catch(sync);
+    }
+    function toggle() {
+      if (vid.paused) play();
+      else vid.pause();
+    }
+
+    vid.addEventListener('play', sync);
+    vid.addEventListener('pause', sync);
+    btn.addEventListener('click', toggle);
+    if (vid.autoplay && !reducedMotion.matches) play();
+    else if (vid.autoplay) vid.pause();
+    sync();
+
+    container._propsBgMediaHeroCleanup = function () {
+      vid.removeEventListener('play', sync);
+      vid.removeEventListener('pause', sync);
+      btn.removeEventListener('click', toggle);
+      container._propsBgMediaHeroCleanup = null;
+    };
+  }
+
+  document.querySelectorAll('[data-section-type="props-bg-media-hero"]').forEach(init);
+
+  document.addEventListener('shopify:section:load', function (event) {
+    var container = event.target.querySelector('[data-section-type="props-bg-media-hero"]');
+    if (container) init(container);
+  });
+
+  document.addEventListener('shopify:section:unload', function (event) {
+    var container = event.target.querySelector('[data-section-type="props-bg-media-hero"]');
+    if (container && container._propsBgMediaHeroCleanup) container._propsBgMediaHeroCleanup();
+  });
+})();
+{% endjavascript %}

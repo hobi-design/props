@@ -1,4 +1,4 @@
-{% comment %} PROPS 1.0.2 | props.tools | MIT license, github.com/hobi-design/props {% endcomment %}
+{% comment %} PROPS 1.0.3 | props.tools | MIT license, github.com/hobi-design/props {% endcomment %}
 {%- comment -%}
   Testimonial Slider | PROPS — https://props.tools/
 {%- endcomment -%}
@@ -368,15 +368,18 @@
     left: 0;
     width: 100%;
     opacity: 0;
+    visibility: hidden;
     pointer-events: none;
-    transition: opacity 0.4s ease;
+    transition: opacity 0.4s ease, visibility 0s linear 0.4s;
     z-index: 1;
   }
 
   .props-testimonials-slider-slide.active {
     position: relative;
     opacity: 1;
+    visibility: visible;
     pointer-events: auto;
+    transition: opacity 0.4s ease, visibility 0s;
     z-index: 2;
   }
 
@@ -410,9 +413,6 @@
     width: 100%;
     overflow: hidden;
     border-radius: var(--props-image-radius);
-    {% unless section.settings.image_aspect_ratio == 'auto' %}
-      aspect-ratio: {{ section.settings.image_aspect_ratio }};
-    {% endunless %}
     position: relative;
     display: block;
   }
@@ -422,12 +422,19 @@
     height: 100%;
     display: block;
     object-fit: cover;
-    {% unless section.settings.image_aspect_ratio == 'auto' %}
+  }
+
+  {% unless section.settings.image_aspect_ratio == 'auto' %}
+    .props-testimonials-slider-{{ section.id }} .props-testimonials-slider-media {
+      aspect-ratio: {{ section.settings.image_aspect_ratio }};
+    }
+
+    .props-testimonials-slider-{{ section.id }} .props-testimonials-slider-img {
       position: absolute;
       top: 0;
       left: 0;
-    {% endunless %}
-  }
+    }
+  {% endunless %}
 
   .props-testimonials-slider-placeholder {
     aspect-ratio: 1200 / 630;
@@ -680,7 +687,7 @@
           {% if section.settings.show_dots %}
             <div class="props-testimonials-slider-dots" id="Dots-{{ section.id }}">
               {% for block in section.blocks %}
-                <button class="props-testimonials-slider-dot {% if forloop.first %}active{% endif %}" data-index="{{ forloop.index0 }}" aria-label="Go to testimonial {{ forloop.index }}"></button>
+                <button type="button" class="props-testimonials-slider-dot {% if forloop.first %}active{% endif %}" data-index="{{ forloop.index0 }}" aria-label="Go to testimonial {{ forloop.index }}"></button>
               {% endfor %}
             </div>
           {% else %}
@@ -689,11 +696,11 @@
 
           {% if section.settings.show_arrows %}
             <div class="props-testimonials-slider-nav">
-              <button class="props-testimonials-slider-arrow" id="Prev-{{ section.id }}" aria-label="Previous testimonial">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+              <button type="button" class="props-testimonials-slider-arrow" id="Prev-{{ section.id }}" aria-label="Previous testimonial">
+                <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
               </button>
-              <button class="props-testimonials-slider-arrow" id="Next-{{ section.id }}" aria-label="Next testimonial">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+              <button type="button" class="props-testimonials-slider-arrow" id="Next-{{ section.id }}" aria-label="Next testimonial">
+                <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
               </button>
             </div>
           {% endif %}
@@ -727,6 +734,8 @@
       dots.forEach((d, i) => d.classList.toggle('active', i === index));
       current = index;
     };
+
+    container._propsTestimonialsSliderGoTo = goTo;
 
     if (nextBtn) {
       nextBtn.addEventListener('click', () => goTo(current + 1));
@@ -768,6 +777,13 @@
   document.addEventListener('shopify:section:load', (e) => {
     const c = e.target.querySelector('[data-section-type="props-testimonials-slider"]');
     if (c) init(c);
+  });
+
+  document.addEventListener('shopify:block:select', (e) => {
+    const slide = e.target.closest('.props-testimonials-slider-slide');
+    if (!slide) return;
+    const c = slide.closest('[data-section-type="props-testimonials-slider"]');
+    if (c && c._propsTestimonialsSliderGoTo) c._propsTestimonialsSliderGoTo(parseInt(slide.getAttribute('data-index'), 10));
   });
 })();
 {% endjavascript %}

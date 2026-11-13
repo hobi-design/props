@@ -1,4 +1,4 @@
-{% comment %} PROPS 1.0.3 | props.tools | MIT license, github.com/hobi-design/props {% endcomment %}
+{% comment %} PROPS 1.0.4 | props.tools | MIT license, github.com/hobi-design/props {% endcomment %}
 {%- comment -%}
   Timeline | PROPS — https://props.tools/
 {%- endcomment -%}
@@ -510,11 +510,14 @@
     background-color: var(--props-accent);
     border-radius: 50%;
     z-index: 3;
-    outline: 4px solid {{ section.settings.bg_color | default: '#FFFFFF' }};
     top: 7px;
     left: var(--props-dot-offset);
     transform: scale(0);
     transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .props-timeline-{{ section.id }} .props-timeline-dot {
+    outline: 4px solid {{ section.settings.bg_color | default: '#FFFFFF' }};
   }
 
   .props-timeline-item.is-visible .props-timeline-dot {
@@ -608,9 +611,49 @@
   .props-timeline-image-wrap.img-size-small { max-width: 200px; }
   .props-timeline-image-wrap.img-size-medium { max-width: 400px; }
   .props-timeline-image-wrap.img-size-full { max-width: 100%; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .props-timeline-tagline,
+    .props-timeline-heading,
+    .props-timeline-desc,
+    .props-timeline-item,
+    .props-timeline-dot,
+    .props-timeline-image {
+      transform: none !important;
+      transition: none !important;
+      animation: none !important;
+    }
+
+    .props-timeline-heading,
+    .props-timeline-desc,
+    .props-timeline-item {
+      opacity: 1;
+    }
+
+    .props-timeline-tagline {
+      opacity: 0.7;
+    }
+  }
 {% endstyle %}
 
 {% if section.blocks.size > 0 or section.settings.heading != blank %}
+<noscript>
+  <style>
+    .props-timeline-{{ section.id }} .props-timeline-heading,
+    .props-timeline-{{ section.id }} .props-timeline-desc,
+    .props-timeline-{{ section.id }} .props-timeline-item {
+      opacity: 1;
+      transform: none;
+    }
+    .props-timeline-{{ section.id }} .props-timeline-tagline {
+      opacity: 0.7;
+      transform: none;
+    }
+    .props-timeline-{{ section.id }} .props-timeline-dot {
+      transform: none;
+    }
+  </style>
+</noscript>
 <div class="props-timeline-{{ section.id }}" data-section-type="props-timeline" data-section-id="{{ section.id }}">
   <div class="props-timeline-container">
     <div class="props-timeline-wrapper">
@@ -689,43 +732,54 @@
     var id = container.getAttribute('data-section-id');
     if (!id) return;
 
+    if (container._propsTimelineCleanup) container._propsTimelineCleanup();
+
     var introEls = container.querySelectorAll(
       '.props-timeline-tagline, .props-timeline-heading, .props-timeline-desc'
     );
     var items = container.querySelectorAll('.props-timeline-item');
     var progress = container.querySelector('.props-timeline-progress');
     var list = container.querySelector('.props-timeline-list');
+    var introObserver = null;
+    var itemObserver = null;
+    var onScroll = null;
+    var rafId = null;
 
-    var introObserver = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible');
-            introObserver.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
+    if (!('IntersectionObserver' in window)) {
+      introEls.forEach(function (el) { el.classList.add('is-visible'); });
+      items.forEach(function (el) { el.classList.add('is-visible'); });
+    } else {
+      introObserver = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              introObserver.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.1 }
+      );
 
-    introEls.forEach(function (el) { introObserver.observe(el); });
+      introEls.forEach(function (el) { introObserver.observe(el); });
 
-    var itemObserver = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            var idx = Array.prototype.indexOf.call(items, entry.target);
-            var delay = Math.min(idx * 80, 400);
-            entry.target.style.transitionDelay = delay + 'ms';
-            entry.target.classList.add('is-visible');
-            itemObserver.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.15, rootMargin: '0px 0px -40px 0px' }
-    );
+      itemObserver = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              var idx = Array.prototype.indexOf.call(items, entry.target);
+              var delay = Math.min(idx * 80, 400);
+              entry.target.style.transitionDelay = delay + 'ms';
+              entry.target.classList.add('is-visible');
+              itemObserver.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.15, rootMargin: '0px 0px -40px 0px' }
+      );
 
-    items.forEach(function (el) { itemObserver.observe(el); });
+      items.forEach(function (el) { itemObserver.observe(el); });
+    }
 
     if (progress && list) {
       var ticking = false;
@@ -738,15 +792,25 @@
         ticking = false;
       };
 
-      window.addEventListener('scroll', function () {
+      onScroll = function () {
         if (!ticking) {
-          requestAnimationFrame(updateProgress);
+          rafId = requestAnimationFrame(updateProgress);
           ticking = true;
         }
-      });
+      };
+
+      window.addEventListener('scroll', onScroll);
 
       updateProgress();
     }
+
+    container._propsTimelineCleanup = function () {
+      if (introObserver) introObserver.disconnect();
+      if (itemObserver) itemObserver.disconnect();
+      if (onScroll) window.removeEventListener('scroll', onScroll);
+      cancelAnimationFrame(rafId);
+      container._propsTimelineCleanup = null;
+    };
   };
 
   document.querySelectorAll('[data-section-type="props-timeline"]').forEach(init);
@@ -754,6 +818,11 @@
   document.addEventListener('shopify:section:load', function (e) {
     var c = e.target.querySelector('[data-section-type="props-timeline"]');
     if (c) init(c);
+  });
+
+  document.addEventListener('shopify:section:unload', function (e) {
+    var c = e.target.querySelector('[data-section-type="props-timeline"]');
+    if (c && c._propsTimelineCleanup) c._propsTimelineCleanup();
   });
 })();
 {% endjavascript %}

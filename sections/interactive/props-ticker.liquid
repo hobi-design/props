@@ -1,4 +1,4 @@
-{% comment %} PROPS 1.0.1 | props.tools | MIT license, github.com/hobi-design/props {% endcomment %}
+{% comment %} PROPS 1.0.2 | props.tools | MIT license, github.com/hobi-design/props {% endcomment %}
 {%- comment -%}
   Scrolling Marquee | PROPS — https://props.tools/
 {%- endcomment -%}
@@ -281,7 +281,9 @@
     color: {{ section.settings.text_color }};
     padding-top: {{ section.settings.padding_top_mobile }}px;
     padding-bottom: {{ section.settings.padding_bottom_mobile }}px;
+    position: relative;
     overflow: hidden;
+    overflow: clip;
     width: 100%;
 
     --props-item-height: {{ section.settings.item_height_mobile }}px;
@@ -365,6 +367,64 @@
     color: inherit;
   }
 
+  .props-ticker-link:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: -2px;
+  }
+
+  .props-ticker-pause {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    background: rgba(0, 0, 0, 0.5);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    color: #fff;
+    z-index: 2;
+    transition: opacity 0.2s ease;
+  }
+
+  @media (hover: hover) {
+    .props-ticker-pause:hover {
+      opacity: 0.7;
+    }
+  }
+
+  .props-ticker-pause:focus-visible {
+    outline: 2px solid #FFFFFF;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px #121212;
+  }
+
+  .props-ticker-pause svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .props-ticker-pause-icon-play {
+    display: none;
+  }
+
+  .props-ticker-pause.is-paused .props-ticker-pause-icon-pause {
+    display: none;
+  }
+
+  .props-ticker-pause.is-paused .props-ticker-pause-icon-play {
+    display: block;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .props-ticker-pause {
+      display: none;
+    }
+  }
 
 {% endstyle %}
 
@@ -390,14 +450,14 @@
   data-pause-on-hover="{{ section.settings.pause_on_hover }}"
 >
   {% if has_blocks %}
-    <div class="props-ticker-track" aria-label="Scrolling content">
+    <div class="props-ticker-track">
       {% for copy in (1..2) %}
         {% for block in section.blocks %}
-          <div class="props-ticker-item" {% if copy == 1 %}{{ block.shopify_attributes }}{% endif %}>
+          <div class="props-ticker-item" {% if copy == 1 %}{{ block.shopify_attributes }}{% else %}aria-hidden="true"{% endif %}>
 
             {% if block.type == 'image' %}
               {% if block.settings.link != blank %}
-                <a href="{{ block.settings.link }}" class="props-ticker-link" aria-label="{{ block.settings.alt_text | default: 'Ticker image' | escape }}" tabindex="-1">
+                <a href="{{ block.settings.link }}" class="props-ticker-link" aria-label="{{ block.settings.alt_text | default: 'Ticker image' | escape }}"{% if copy == 2 %} tabindex="-1"{% endif %}>
               {% endif %}
 
               <div class="props-ticker-media">
@@ -420,7 +480,7 @@
 
             {% elsif block.type == 'text' %}
               {% if block.settings.link != blank %}
-                <a href="{{ block.settings.link }}" class="props-ticker-link" tabindex="-1">
+                <a href="{{ block.settings.link }}" class="props-ticker-link"{% if copy == 2 %} tabindex="-1"{% endif %}>
               {% endif %}
 
               <span class="props-ticker-text">{{ block.settings.text | escape }}</span>
@@ -434,6 +494,10 @@
         {% endfor %}
       {% endfor %}
     </div>
+    <button type="button" class="props-ticker-pause" aria-label="Pause ticker">
+      <svg class="props-ticker-pause-icon-pause" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+      <svg class="props-ticker-pause-icon-play" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,4 20,12 6,20"/></svg>
+    </button>
   {% endif %}
 </div>
 
@@ -450,6 +514,7 @@
     var track = container.querySelector('.props-ticker-track');
     if (!track) return;
 
+    var pauseBtn = container.querySelector('.props-ticker-pause');
     var speedDesktop = parseFloat(container.getAttribute('data-speed')) || 50;
     var speedMobile = parseFloat(container.getAttribute('data-speed-mobile')) || 35;
     var direction = container.getAttribute('data-direction') || 'left';
@@ -461,7 +526,15 @@
     var rafId = null;
     var lastTime = 0;
     var hovering = false;
+    var focused = false;
+    var paused = false;
     var isDragging = false;
+    var removers = [];
+
+    var on = function (target, eventName, handler, options) {
+      target.addEventListener(eventName, handler, options);
+      removers.push(function () { target.removeEventListener(eventName, handler, options); });
+    };
 
     var getSpeed = function () {
       return window.innerWidth < 750 ? speedMobile : speedDesktop;
@@ -486,8 +559,12 @@
       }
     };
 
+    var apply = function () {
+      track.style.transform = 'translateX(' + offset + 'px)';
+    };
+
     var tick = function (now) {
-      if (reducedMotion.matches || isDragging || hovering) {
+      if (reducedMotion.matches || isDragging || hovering || focused || paused) {
         lastTime = 0;
         rafId = requestAnimationFrame(tick);
         return;
@@ -513,23 +590,61 @@
       }
 
       wrapOffset();
-      track.style.transform = 'translateX(' + offset + 'px)';
+      apply();
       rafId = requestAnimationFrame(tick);
     };
 
     rafId = requestAnimationFrame(tick);
 
     if (pauseOnHover) {
-      container.addEventListener('mouseenter', function () { hovering = true; });
-      container.addEventListener('mouseleave', function () { hovering = false; lastTime = 0; });
+      on(container, 'mouseenter', function () { hovering = true; });
+      on(container, 'mouseleave', function () { hovering = false; lastTime = 0; });
     }
+
+    if (pauseBtn) {
+      on(pauseBtn, 'click', function () {
+        paused = !paused;
+        pauseBtn.classList.toggle('is-paused', paused);
+        pauseBtn.setAttribute('aria-label', paused ? 'Play ticker' : 'Pause ticker');
+        lastTime = 0;
+      });
+    }
+
+    on(track, 'focusin', function (e) {
+      focused = true;
+      container.scrollLeft = 0;
+      var item = e.target.closest('.props-ticker-item');
+      if (!item) return;
+      var box = container.getBoundingClientRect();
+      var rect = item.getBoundingClientRect();
+      if (rect.left < box.left || rect.right > box.right) {
+        offset = Math.min(0, 16 - (item.offsetLeft - track.offsetLeft));
+        apply();
+      }
+    });
+
+    on(track, 'focusout', function (e) {
+      if (!e.relatedTarget || !track.contains(e.relatedTarget)) {
+        focused = false;
+        lastTime = 0;
+      }
+    });
+
+    on(container, 'scroll', function () { container.scrollLeft = 0; });
 
     if (draggable) {
       var startX = 0;
       var dragStartOffset = 0;
+      var moved = false;
 
       var onStart = function (e) {
+        if (pauseBtn && pauseBtn.contains(e.target)) return;
+        if (e.type === 'mousedown') {
+          if (e.button !== 0) return;
+          e.preventDefault();
+        }
         isDragging = true;
+        moved = false;
         container.classList.add('is-dragging');
         startX = e.touches ? e.touches[0].clientX : e.clientX;
         dragStartOffset = offset;
@@ -538,9 +653,10 @@
       var onMove = function (e) {
         if (!isDragging) return;
         var x = e.touches ? e.touches[0].clientX : e.clientX;
+        if (Math.abs(x - startX) > 5) moved = true;
         offset = dragStartOffset + (x - startX);
         wrapOffset();
-        track.style.transform = 'translateX(' + offset + 'px)';
+        apply();
       };
 
       var onEnd = function () {
@@ -550,20 +666,30 @@
         lastTime = 0;
       };
 
-      container.addEventListener('mousedown', onStart);
-      container.addEventListener('mousemove', onMove);
-      container.addEventListener('mouseup', onEnd);
-      container.addEventListener('mouseleave', function () {
+      on(container, 'mousedown', onStart);
+      on(container, 'mousemove', onMove);
+      on(container, 'mouseup', onEnd);
+      on(container, 'mouseleave', function () {
         if (isDragging) onEnd();
       });
+      on(container, 'click', function (e) {
+        if (!moved) return;
+        moved = false;
+        e.preventDefault();
+        e.stopPropagation();
+      }, true);
 
-      container.addEventListener('touchstart', onStart, { passive: true });
-      container.addEventListener('touchmove', onMove, { passive: true });
-      container.addEventListener('touchend', onEnd);
+      on(container, 'touchstart', onStart, { passive: true });
+      on(container, 'touchmove', onMove, { passive: true });
+      on(container, 'touchend', onEnd);
     }
 
     container._propsTickerCleanup = function () {
       cancelAnimationFrame(rafId);
+      removers.forEach(function (remove) { remove(); });
+      track.style.transform = '';
+      container.classList.remove('is-dragging');
+      container._propsTickerCleanup = null;
     };
   };
 
@@ -572,6 +698,11 @@
   document.addEventListener('shopify:section:load', function (e) {
     var c = e.target.querySelector('[data-section-type="props-ticker"]');
     if (c) init(c);
+  });
+
+  document.addEventListener('shopify:section:unload', function (e) {
+    var c = e.target.querySelector('[data-section-type="props-ticker"]');
+    if (c && c._propsTickerCleanup) c._propsTickerCleanup();
   });
 })();
 {% endjavascript %}
